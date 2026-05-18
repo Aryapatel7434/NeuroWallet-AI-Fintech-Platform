@@ -1,4 +1,4 @@
-# 💳 Smart Wallet REST API
+# 💳 NeuroWallet-AI-Fintech-Platform
 
 A secure FinTech backend system built using **Java, Spring Boot, MySQL, Spring Data JPA, Hibernate, REST APIs, and JWT Authentication**.
 
