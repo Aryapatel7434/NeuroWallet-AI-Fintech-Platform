@@ -7,6 +7,7 @@ com\smartwallet\dto\RegisterRequest.class
 com\smartwallet\exception\GlobalExceptionHandler.class
 com\smartwallet\service\UserService.class
 com\smartwallet\security\JwtUtil.class
+com\smartwallet\dto\AddMoneyRequest.class
 com\smartwallet\service\WalletService.class
 com\smartwallet\service\TransactionService.class
 com\smartwallet\model\User.class
@@ -14,6 +15,7 @@ com\smartwallet\controller\UserController.class
 com\smartwallet\exception\ResourceNotFoundException.class
 com\smartwallet\model\Wallet.class
 com\smartwallet\controller\AuthService.class
+com\smartwallet\service\walletRepostiroy.class
 com\smartwallet\security\JwtFilter.class
 com\smartwallet\config\SecurityBeans.class
 com\smartwallet\controller\AuthController.class

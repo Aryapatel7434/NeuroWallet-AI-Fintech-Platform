@@ -1,26 +1,58 @@
 package com.smartwallet.service;
 
+import com.smartwallet.dto.AddMoneyRequest;
+import com.smartwallet.exception.BadRequestException;
+import com.smartwallet.exception.ResourceNotFoundException;
 import com.smartwallet.model.Wallet;
 import com.smartwallet.repository.WalletRepository;
+import java.math.BigDecimal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service//Spring automatically creates object of this class.
+@Service
 public class WalletService {
 
-    private final WalletRepository walletRepository; //used to access wallet table
+    private final WalletRepository walletRepository;
 
     public WalletService(WalletRepository walletRepository) {
         this.walletRepository = walletRepository;
     }
-    //Return wallet of currently logged in user
+
     public Wallet getMyWallet() {
 
-        String email = SecurityContextHolder //Global Current User Storage
-                .getContext()//gets current security context
-                .getAuthentication()//Return Authentication object
-                .getName();//Usename/Email
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
 
-        return walletRepository.findByUserEmail(email);//Repository fetches wallet using email
+        return walletRepository.findByUserEmail(email);
+    }
+
+    @Transactional
+    public Wallet addMoney(AddMoneyRequest request) {
+
+        if (request.getAmount() == null ||
+                request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+
+            throw new BadRequestException("Amount must be greater than zero");
+        }
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        Wallet wallet = walletRepository.findByUserEmail(email);
+
+        if (wallet == null) {
+            throw new ResourceNotFoundException("Wallet not found");
+        }
+
+        wallet.setBalance(
+                wallet.getBalance().add(request.getAmount())
+        );
+
+        return walletRepository.save(wallet);
     }
 }

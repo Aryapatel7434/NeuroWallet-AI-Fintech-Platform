@@ -1,5 +1,6 @@
 package com.smartwallet.controller;
 
+import com.smartwallet.dto.AddMoneyRequest;
 import com.smartwallet.model.Wallet;
 import com.smartwallet.service.WalletService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,5 +20,11 @@ public class WalletController {
     @PreAuthorize("hasRole('USER')")//only Authenticated user can access this api
     public Wallet getMyWallet() {
         return walletService.getMyWallet();
+    }
+    //it allows Logged-in users to add money into their wallet
+    @PostMapping("/add-money")
+    @PreAuthorize("hasRole('USER')")//this is security line only ROLE_USRR can access this API
+    public Wallet addMoney(@RequestBody AddMoneyRequest request){//This Method Return wallet object
+        return walletService.addMoney(request);
     }
 }
