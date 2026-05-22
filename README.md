@@ -336,4 +336,42 @@ Build a production-level AI-powered fintech ecosystem capable of simulating real
 #### Get My Wallet
 
 ```http
+
+
+## 🚀 Day 12 — Add Money API & Transaction Safety
+
+### ✅ Completed Features
+
+- Created AddMoneyRequest DTO
+- Implemented secure add-money API
+- Added wallet balance update logic
+- Used BigDecimal for money calculations
+- Added amount validation
+- Used SecurityContextHolder for authenticated user
+- Added transactional wallet update using @Transactional
+- Integrated JWT-secured wallet operations
+- Tested wallet balance updates in MySQL
+- Added negative amount validation handling
+
+---
+
+### 🧠 Key Concepts Learned
+
+- DTO (Data Transfer Object)
+- Financial precision using BigDecimal
+- Why fintech systems avoid double for money
+- Secure balance update flow
+- Spring Security authenticated user extraction
+- @Transactional database consistency
+- Business validation logic
+- Secure wallet APIs using JWT authentication
+
+---
+
+### 🔐 APIs Added
+
+#### Add Money API
+
+```http
+POST /api/wallet/add-money
 GET /api/wallet/me
