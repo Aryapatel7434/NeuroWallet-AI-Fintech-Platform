@@ -21,6 +21,7 @@ com\smartwallet\security\JwtFilter.class
 com\smartwallet\config\SecurityBeans.class
 com\smartwallet\controller\AuthController.class
 com\smartwallet\service\bcryptPasswordEncoder.class
+com\smartwallet\service\page.class
 com\smartwallet\exception\BadRequestException.class
 com\smartwallet\security\SecurityConfig.class
 com\smartwallet\dto\TransactionRequest.class
@@ -29,6 +30,7 @@ com\smartwallet\repository\WalletRepository.class
 com\smartwallet\repository\UserRepository.class
 com\smartwallet\service\AuthService.class
 com\smartwallet\exception\ErrorResponse.class
+com\smartwallet\service\transactioRepository.class
 com\smartwallet\dto\LoginRequest.class
 com\smartwallet\controller\jwtUtil.class
 com\smartwallet\security\CustomUserDetails.class
