@@ -1,6 +1,7 @@
 package com.smartwallet.repository;
 
 import com.smartwallet.model.Transaction;
+import com.smartwallet.model.TransactionStatus;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +30,8 @@ public interface TransactionRepository
             String receiverEmail,
             Pageable pageable
     );
+
+    Page<Transaction>findByStatus(TransactionStatus status,Pageable pageable);
+    long countByStatus(TransactionStatus status);
+    
 }

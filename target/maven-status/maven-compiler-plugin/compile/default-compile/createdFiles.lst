@@ -1,6 +1,7 @@
 com\smartwallet\repository\TransactionRepository.class
 com\smartwallet\controller\TransactionController.class
 com\smartwallet\model\Transaction.class
+com\smartwallet\dto\TransactionAnalyticsResponse.class
 com\smartwallet\security\CustomUserDetailsService.class
 com\smartwallet\SmartwalletRestApiApplication.class
 com\smartwallet\dto\RegisterRequest.class
@@ -31,6 +32,7 @@ com\smartwallet\repository\WalletRepository.class
 com\smartwallet\repository\UserRepository.class
 com\smartwallet\service\AuthService.class
 com\smartwallet\exception\ErrorResponse.class
+com\smartwallet\service\TransactionAuditService.class
 com\smartwallet\service\transactioRepository.class
 com\smartwallet\dto\LoginRequest.class
 com\smartwallet\controller\jwtUtil.class

@@ -1,5 +1,6 @@
 package com.smartwallet.service;
 
+import com.smartwallet.dto.TransactionAnalyticsResponse;
 import com.smartwallet.dto.TransactionRequest;
 import com.smartwallet.exception.BadRequestException;
 import com.smartwallet.exception.ResourceNotFoundException;
@@ -26,13 +27,17 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
+    private final TransactionAuditService transactionAuditService;
 
     public TransactionService(UserRepository userRepository,
                               WalletRepository walletRepository,
-                              TransactionRepository transactionRepository) {
+                              TransactionRepository transactionRepository,
+                              TransactionAuditService transactionAuditService) {
+
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
+        this.transactionAuditService = transactionAuditService;
     }
 
     @Transactional
@@ -40,6 +45,7 @@ public class TransactionService {
 
         if (request.getAmount() == null ||
                 request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+
             throw new BadRequestException("Amount must be greater than zero");
         }
 
@@ -57,10 +63,24 @@ public class TransactionService {
         User receiver = userRepository.findByEmail(request.getReceiverEmail());
 
         if (receiver == null) {
+
+            transactionAuditService.saveFailedTransaction(
+                    senderEmail,
+                    request.getReceiverEmail(),
+                    request.getAmount()
+            );
+
             throw new ResourceNotFoundException("Receiver not found");
         }
 
         if (sender.getEmail().equals(receiver.getEmail())) {
+
+            transactionAuditService.saveFailedTransaction(
+                    sender.getEmail(),
+                    receiver.getEmail(),
+                    request.getAmount()
+            );
+
             throw new BadRequestException("Cannot send money to yourself");
         }
 
@@ -76,6 +96,13 @@ public class TransactionService {
         }
 
         if (senderWallet.getBalance().compareTo(request.getAmount()) < 0) {
+
+            transactionAuditService.saveFailedTransaction(
+                    sender.getEmail(),
+                    receiver.getEmail(),
+                    request.getAmount()
+            );
+
             throw new BadRequestException("Insufficient balance");
         }
 
@@ -141,5 +168,30 @@ public class TransactionService {
         );
 
         return transactionRepository.findByReceiverEmail(email, pageable);
+    }
+
+    public Page<Transaction> getTransactionsByStatus(
+            TransactionStatus status,
+            int page,
+            int size) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("timestamp").descending()
+        );
+
+        return transactionRepository.findByStatus(status, pageable);
+    }
+
+    public TransactionAnalyticsResponse getTransactionAnalytics() {
+
+        long successCount =
+                transactionRepository.countByStatus(TransactionStatus.SUCCESS);
+
+        long failedCount =
+                transactionRepository.countByStatus(TransactionStatus.FAILED);
+
+        return new TransactionAnalyticsResponse(successCount, failedCount);
     }
 }

@@ -12,6 +12,6 @@ public enum TransactionStatus {
     //Enum gives fixed allowed values
     PENDING,
     SUCCESS,
-    FAILD
+    FAILD, FAILED
     
 }
