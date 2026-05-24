@@ -5,6 +5,7 @@ import com.smartwallet.dto.TransactionRequest;
 import com.smartwallet.model.Transaction;
 import com.smartwallet.model.TransactionStatus;
 import com.smartwallet.service.TransactionService;
+import java.math.BigDecimal;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -98,5 +99,35 @@ public class TransactionController {
     @PreAuthorize("hasRole('ADMIN')")
     public TransactionAnalyticsResponse getAnalytics() {
         return transactionService.getTransactionAnalytics();
+    }
+
+    @GetMapping("/admin/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Transaction> searchTransactionsByEmail(
+            @RequestParam String email,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return transactionService.searchTransactionsByEmail(
+                email,
+                page,
+                size
+        );
+    }
+
+    @GetMapping("/admin/amount-range")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Transaction> getTransactionsByAmountRange(
+            @RequestParam BigDecimal minAmount,
+            @RequestParam BigDecimal maxAmount,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return transactionService.getTransactionsByAmountRange(
+                minAmount,
+                maxAmount,
+                page,
+                size
+        );
     }
 }

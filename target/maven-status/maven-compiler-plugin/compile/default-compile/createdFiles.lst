@@ -18,6 +18,7 @@ com\smartwallet\controller\UserController.class
 com\smartwallet\exception\ResourceNotFoundException.class
 com\smartwallet\model\Wallet.class
 com\smartwallet\controller\AuthService.class
+com\smartwallet\service\Pagerequest.class
 com\smartwallet\service\walletRepostiroy.class
 com\smartwallet\security\JwtFilter.class
 com\smartwallet\config\SecurityBeans.class
