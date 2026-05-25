@@ -667,3 +667,51 @@ LocalDateTime handling
 Entity persistence with JPA
 DTO to Entity mapping
 Enum status management
+
+
+
+
+🚀 Day 20 — Automatic Scheduled Transaction Processor
+✅ Features Built
+Automatic scheduled transaction execution
+Background scheduler service
+Scheduled payment processor
+Auto wallet balance transfer
+SUCCESS / FAILED status update
+Fintech cron-job architecture
+MySQL scheduler verification
+🧠 Enterprise Backend Concepts Learned
+Spring Scheduler (@Scheduled)
+Background job processing
+Automated transaction execution
+Payment scheduling systems
+Transaction automation
+Fintech backend architecture
+Real-world cron systems
+⚙ Technologies Used
+Spring Boot
+Spring Scheduler
+Spring Security JWT
+MySQL
+JPA Hibernate
+🔄 Scheduler Flow
+PENDING
+   ↓
+Scheduler checks every 30 sec
+   ↓
+If scheduled time reached
+   ↓
+Balance transfer executes
+   ↓
+SUCCESS / FAILED
+🛠 APIs Tested
+Schedule Transaction
+POST /api/scheduled-transactions/schedule
+✅ Database Verification
+
+Verified:
+
+scheduled_transaction table
+wallet balance auto-update
+SUCCESS status update
+FAILED status handling
