@@ -28,16 +28,20 @@ public class TransactionService {
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     private final TransactionAuditService transactionAuditService;
+    private final WalletCacheService walletCacheService;
 
-    public TransactionService(UserRepository userRepository,
-                              WalletRepository walletRepository,
-                              TransactionRepository transactionRepository,
-                              TransactionAuditService transactionAuditService) {
+    public TransactionService(
+            UserRepository userRepository,
+            WalletRepository walletRepository,
+            TransactionRepository transactionRepository,
+            TransactionAuditService transactionAuditService,
+            WalletCacheService walletCacheService) {
 
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
         this.transactionAuditService = transactionAuditService;
+        this.walletCacheService = walletCacheService;
     }
 
     @Transactional
@@ -122,6 +126,9 @@ public class TransactionService {
 
         transaction.setStatus(TransactionStatus.SUCCESS);
         transactionRepository.save(transaction);
+
+        walletCacheService.clearWalletCache(sender.getEmail());
+        walletCacheService.clearWalletCache(receiver.getEmail());
 
         return "Transaction Successful";
     }
@@ -224,9 +231,5 @@ public class TransactionService {
                 maxAmount,
                 pageable
         );
-    }
-
-    public Page<Transaction> searchTransactionByEmail(String email, int page, int size) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -33,6 +33,7 @@ com\smartwallet\dto\TransactionAnalyticsResponse.class
 com\smartwallet\repository\ScheduledTransactionRepository.class
 com\smartwallet\dto\AddMoneyRequest.class
 com\smartwallet\model\User.class
+com\smartwallet\service\WalletCacheService.class
 com\smartwallet\exception\ResourceNotFoundException.class
 com\smartwallet\model\Wallet.class
 com\smartwallet\controller\AuthService.class
