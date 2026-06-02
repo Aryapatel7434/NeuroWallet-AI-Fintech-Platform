@@ -17,6 +17,7 @@ D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\OtpReq
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\RegisterRequest.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\ScheduleTransactionRequest.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\TransactionAnalyticsResponse.java
+D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\TransactionEvent.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\TransactionRequest.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\VerifyOtpRequest.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\dto\WithdrawRequest.java
@@ -26,6 +27,8 @@ D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\ResourceNotFoundException.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\TooManyRequestsException.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\TooManyRequestsExceptionString.java
+D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\kafka\TransactionEventConsumer.java
+D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\kafka\TransactionEventProducer.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\model\AuditLog.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\model\Otp.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\model\ScheduledTransaction.java

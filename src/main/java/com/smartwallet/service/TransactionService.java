@@ -1,9 +1,11 @@
 package com.smartwallet.service;
 
 import com.smartwallet.dto.TransactionAnalyticsResponse;
+import com.smartwallet.dto.TransactionEvent;
 import com.smartwallet.dto.TransactionRequest;
 import com.smartwallet.exception.BadRequestException;
 import com.smartwallet.exception.ResourceNotFoundException;
+import com.smartwallet.kafka.TransactionEventProducer;
 import com.smartwallet.model.Transaction;
 import com.smartwallet.model.TransactionStatus;
 import com.smartwallet.model.User;
@@ -29,19 +31,22 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final TransactionAuditService transactionAuditService;
     private final WalletCacheService walletCacheService;
+    private final TransactionEventProducer transactionEventProducer;
 
     public TransactionService(
             UserRepository userRepository,
             WalletRepository walletRepository,
             TransactionRepository transactionRepository,
             TransactionAuditService transactionAuditService,
-            WalletCacheService walletCacheService) {
+            WalletCacheService walletCacheService,
+            TransactionEventProducer transactionEventProducer) {
 
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
         this.transactionAuditService = transactionAuditService;
         this.walletCacheService = walletCacheService;
+        this.transactionEventProducer = transactionEventProducer;
     }
 
     @Transactional
@@ -83,8 +88,11 @@ public class TransactionService {
             throw new BadRequestException("Cannot send money to yourself");
         }
 
-        Wallet senderWallet = walletRepository.findByUserEmail(sender.getEmail());
-        Wallet receiverWallet = walletRepository.findByUserEmail(receiver.getEmail());
+        Wallet senderWallet =
+                walletRepository.findByUserEmail(sender.getEmail());
+
+        Wallet receiverWallet =
+                walletRepository.findByUserEmail(receiver.getEmail());
 
         if (senderWallet == null) {
             throw new ResourceNotFoundException("Sender wallet not found");
@@ -103,13 +111,14 @@ public class TransactionService {
             throw new BadRequestException("Insufficient balance");
         }
 
-        Transaction transaction = new Transaction(
-                sender.getEmail(),
-                receiver.getEmail(),
-                request.getAmount(),
-                TransactionStatus.PENDING,
-                LocalDateTime.now()
-        );
+        Transaction transaction =
+                new Transaction(
+                        sender.getEmail(),
+                        receiver.getEmail(),
+                        request.getAmount(),
+                        TransactionStatus.PENDING,
+                        LocalDateTime.now()
+                );
 
         transactionRepository.save(transaction);
 
@@ -130,16 +139,31 @@ public class TransactionService {
         walletCacheService.clearWalletCache(sender.getEmail());
         walletCacheService.clearWalletCache(receiver.getEmail());
 
+        TransactionEvent event =
+                new TransactionEvent(
+                        sender.getEmail(),
+                        receiver.getEmail(),
+                        request.getAmount(),
+                        "SUCCESS",
+                        LocalDateTime.now()
+                );
+
+        transactionEventProducer.publishTransactionEvent(event);
+
         return "Transaction Successful";
     }
 
-    public Page<Transaction> getTransactionHistory(String email, int page, int size) {
+    public Page<Transaction> getTransactionHistory(
+            String email,
+            int page,
+            int size) {
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by("timestamp").descending()
-        );
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("timestamp").descending()
+                );
 
         return transactionRepository.findBySenderEmailOrReceiverEmail(
                 email,
@@ -148,24 +172,32 @@ public class TransactionService {
         );
     }
 
-    public Page<Transaction> getSentTransactions(String email, int page, int size) {
+    public Page<Transaction> getSentTransactions(
+            String email,
+            int page,
+            int size) {
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by("timestamp").descending()
-        );
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("timestamp").descending()
+                );
 
         return transactionRepository.findBySenderEmail(email, pageable);
     }
 
-    public Page<Transaction> getReceivedTransactions(String email, int page, int size) {
+    public Page<Transaction> getReceivedTransactions(
+            String email,
+            int page,
+            int size) {
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by("timestamp").descending()
-        );
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("timestamp").descending()
+                );
 
         return transactionRepository.findByReceiverEmail(email, pageable);
     }
@@ -175,11 +207,12 @@ public class TransactionService {
             int page,
             int size) {
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by("timestamp").descending()
-        );
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("timestamp").descending()
+                );
 
         return transactionRepository.findByStatus(status, pageable);
     }
@@ -187,12 +220,19 @@ public class TransactionService {
     public TransactionAnalyticsResponse getTransactionAnalytics() {
 
         long successCount =
-                transactionRepository.countByStatus(TransactionStatus.SUCCESS);
+                transactionRepository.countByStatus(
+                        TransactionStatus.SUCCESS
+                );
 
         long failedCount =
-                transactionRepository.countByStatus(TransactionStatus.FAILED);
+                transactionRepository.countByStatus(
+                        TransactionStatus.FAILED
+                );
 
-        return new TransactionAnalyticsResponse(successCount, failedCount);
+        return new TransactionAnalyticsResponse(
+                successCount,
+                failedCount
+        );
     }
 
     public Page<Transaction> searchTransactionsByEmail(
@@ -200,11 +240,12 @@ public class TransactionService {
             int page,
             int size) {
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by("timestamp").descending()
-        );
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("timestamp").descending()
+                );
 
         return transactionRepository
                 .findBySenderEmailContainingOrReceiverEmailContaining(
@@ -220,11 +261,12 @@ public class TransactionService {
             int page,
             int size) {
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by("timestamp").descending()
-        );
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("timestamp").descending()
+                );
 
         return transactionRepository.findByAmountBetween(
                 minAmount,

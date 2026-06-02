@@ -4,12 +4,14 @@ com\smartwallet\security\CustomUserDetailsService.class
 com\smartwallet\exception\TooManyRequestsExceptionString.class
 com\smartwallet\SmartwalletRestApiApplication.class
 com\smartwallet\dto\RegisterRequest.class
+com\smartwallet\kafka\TransactionEventConsumer.class
 com\smartwallet\exception\GlobalExceptionHandler.class
 com\smartwallet\service\UserService.class
 com\smartwallet\controller\ScheduledTransactionController.class
 com\smartwallet\security\JwtUtil.class
 com\smartwallet\model\TransactionStatus.class
 com\smartwallet\service\WalletService.class
+com\smartwallet\dto\TransactionEvent.class
 com\smartwallet\dto\OtpRequest.class
 com\smartwallet\service\AuditService.class
 com\smartwallet\dto\WithdrawRequest.class
@@ -43,6 +45,7 @@ com\smartwallet\repository\ScheduledTransactionRepository.class
 com\smartwallet\model\Otp.class
 com\smartwallet\repository\OtpRepository.class
 com\smartwallet\dto\AddMoneyRequest.class
+com\smartwallet\kafka\TransactionEventProducer.class
 com\smartwallet\model\User.class
 com\smartwallet\repository\AuditLogRepository.class
 com\smartwallet\security\RateLimiterService.class
