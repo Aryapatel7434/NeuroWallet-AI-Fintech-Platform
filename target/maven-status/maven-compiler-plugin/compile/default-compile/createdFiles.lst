@@ -25,6 +25,7 @@ com\smartwallet\security\JwtFilter.class
 com\smartwallet\config\SecurityBeans.class
 com\smartwallet\controller\AuthController.class
 com\smartwallet\service\bcryptPasswordEncoder.class
+com\smartwallet\service\log.class
 com\smartwallet\exception\TooManyRequestsException.class
 com\smartwallet\security\SecurityConfig.class
 com\smartwallet\dto\TransactionRequest.class
@@ -61,6 +62,7 @@ com\smartwallet\controller\WalletController.class
 com\smartwallet\exception\ErrorResponse.class
 com\smartwallet\service\EmailService.class
 com\smartwallet\service\transactioRepository.class
+com\smartwallet\config\SwaggerConfig.class
 com\smartwallet\controller\jwtUtil.class
 com\smartwallet\security\CustomUserDetails.class
 com\smartwallet\security\LoginAttemptService.class

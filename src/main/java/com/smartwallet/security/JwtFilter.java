@@ -33,7 +33,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 || path.equals("/api/users/register")
                 || path.startsWith("/api/otp")
                 || path.startsWith("/api/audit")
-                || path.startsWith("/actuator");
+                || path.startsWith("/actuator")
+        
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.equals("/swagger-ui.html");
     }
 
     @Override

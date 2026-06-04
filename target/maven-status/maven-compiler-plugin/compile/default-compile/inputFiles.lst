@@ -1,5 +1,6 @@
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\config\BcryptPasswordEncoder.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\config\SecurityBeans.java
+D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\config\SwaggerConfig.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\controller\AuditController.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\controller\AuthController.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\controller\AuthService.java
@@ -53,6 +54,7 @@ D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\Au
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\AuthService.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\bcryptPasswordEncoder.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\EmailService.java
+D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\log.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\OtpService.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\page.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\service\Pagerequest.java

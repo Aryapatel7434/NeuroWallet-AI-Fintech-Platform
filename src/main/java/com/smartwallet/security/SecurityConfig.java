@@ -41,6 +41,12 @@ public class SecurityConfig {
 
                         // Admin Endpoints
                         .requestMatchers("/api/users").hasAuthority("ROLE_ADMIN")
+                        
+                        .requestMatchers(
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                          "/v3/api-docs/**"
+).permitAll()
 
                         .anyRequest().authenticated()
                 )
