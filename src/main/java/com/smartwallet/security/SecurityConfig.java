@@ -26,14 +26,20 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // Public Endpoints
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/users/register").permitAll()
                         .requestMatchers("/api/otp/**").permitAll()
                         .requestMatchers("/api/audit/**").permitAll()
 
+                        // Actuator Endpoints
+                        .requestMatchers("/actuator/**").permitAll()
+
+                        // Protected Endpoints
                         .requestMatchers("/api/wallet/**").authenticated()
                         .requestMatchers("/api/transactions/**").authenticated()
 
+                        // Admin Endpoints
                         .requestMatchers("/api/users").hasAuthority("ROLE_ADMIN")
 
                         .anyRequest().authenticated()
