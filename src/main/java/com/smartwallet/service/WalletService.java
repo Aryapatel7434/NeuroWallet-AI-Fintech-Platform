@@ -8,12 +8,14 @@ import com.smartwallet.model.Wallet;
 import com.smartwallet.repository.UserRepository;
 import com.smartwallet.repository.WalletRepository;
 import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service//This manage all user operations
+@Slf4j
+@Service
 public class WalletService {
 
     private final WalletRepository walletRepository;
@@ -29,28 +31,29 @@ public class WalletService {
         this.userRepository = userRepository;
         this.walletCacheService = walletCacheService;
     }
-   //Fetch wallet using email with Redis caching
+
     @Cacheable(value = "myWallet", key = "#email")
     public Wallet getWalletByEmail(String email) {
 
-        System.out.println("Fetching wallet from MySQL for: " + email);
+        log.info("Fetching wallet from MySQL for user: {}", email);
 
         Wallet wallet = walletRepository.findByUserEmail(email);
 
         if (wallet == null) {
+            log.warn("Wallet not found for user: {}", email);
             throw new ResourceNotFoundException("Wallet not found");
         }
-        //if wallet found so spring store request in Redis
-        //and then second data Now redis is already data so,spring returns directly from redis.This is called Cache-Aside Pattern
+
         return wallet;
     }
 
     public Wallet getMyWallet() {
-        //Get wallet currently logged in user
 
         String email = getCurrentUserEmail();
 
-        return getWalletByEmail(email);//Call cached Method
+        log.info("Get wallet request received for user: {}", email);
+
+        return getWalletByEmail(email);
     }
 
     @Transactional
@@ -59,14 +62,21 @@ public class WalletService {
         if (request.getAmount() == null ||
                 request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 
+            log.warn("Invalid add money amount: {}", request.getAmount());
             throw new BadRequestException("Amount must be greater than zero");
         }
 
         String email = getCurrentUserEmail();
 
+        log.info("Add money request received. User={}, Amount={}",
+                email,
+                request.getAmount()
+        );
+
         Wallet wallet = walletRepository.findByUserEmail(email);
 
         if (wallet == null) {
+            log.warn("Add money failed. Wallet not found for user: {}", email);
             throw new ResourceNotFoundException("Wallet not found");
         }
 
@@ -78,6 +88,11 @@ public class WalletService {
 
         walletCacheService.clearWalletCache(email);
 
+        log.info("Money added successfully. User={}, NewBalance={}",
+                email,
+                savedWallet.getBalance()
+        );
+
         return savedWallet;
     }
 
@@ -87,18 +102,32 @@ public class WalletService {
         if (request.getAmount() == null ||
                 request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 
+            log.warn("Invalid withdraw amount: {}", request.getAmount());
             throw new BadRequestException("Withdraw amount must be greater than zero");
         }
 
         String email = getCurrentUserEmail();
 
+        log.info("Withdraw request received. User={}, Amount={}",
+                email,
+                request.getAmount()
+        );
+
         Wallet wallet = walletRepository.findByUserEmail(email);
 
         if (wallet == null) {
+            log.warn("Withdraw failed. Wallet not found for user: {}", email);
             throw new ResourceNotFoundException("Wallet not found");
         }
 
         if (wallet.getBalance().compareTo(request.getAmount()) < 0) {
+
+            log.warn("Withdraw failed due to insufficient balance. User={}, Balance={}, Requested={}",
+                    email,
+                    wallet.getBalance(),
+                    request.getAmount()
+            );
+
             throw new BadRequestException("Insufficient wallet balance");
         }
 
@@ -109,6 +138,11 @@ public class WalletService {
         Wallet savedWallet = walletRepository.save(wallet);
 
         walletCacheService.clearWalletCache(email);
+
+        log.info("Money withdrawn successfully. User={}, RemainingBalance={}",
+                email,
+                savedWallet.getBalance()
+        );
 
         return savedWallet;
     }
