@@ -1507,3 +1507,224 @@ Tested with:
 - Add Money API
 - Withdraw API
 - Send Money API
+
+
+
+
+
+# Day 33 — Advanced Validation
+
+## Overview
+
+Implemented enterprise-level request validation using Jakarta Bean Validation in NeuroWallet AI Fintech Platform.
+
+This ensures invalid requests are rejected before reaching business logic, improving security, data integrity, and API reliability.
+
+---
+
+## Technologies Used
+
+* Spring Boot Validation
+* Jakarta Validation
+* Global Exception Handling
+* DTO Validation
+* REST API Best Practices
+
+---
+
+## Features Implemented
+
+### Login Validation
+
+* Email cannot be blank
+* Email format validation
+* Password cannot be blank
+
+### User Registration Validation
+
+* Name required
+* Email required
+* Email format validation
+* Password minimum length validation
+* Role required
+
+### Wallet Validation
+
+* Add money amount required
+* Minimum amount validation
+* Withdraw amount required
+* Minimum amount validation
+
+### Transaction Validation
+
+* Receiver email required
+* Receiver email format validation
+* Amount required
+* Minimum amount validation
+
+---
+
+## Controller Improvements
+
+Added:
+
+```java
+@Valid
+```
+
+to request DTOs in:
+
+* AuthController
+* UserController
+* WalletController
+* TransactionController
+
+This automatically validates request payloads before executing service logic.
+
+---
+
+## Global Exception Handling
+
+Added validation exception handling using:
+
+```java
+MethodArgumentNotValidException
+```
+
+Invalid requests now return clean JSON responses.
+
+Example:
+
+```json
+{
+  "timestamp": "2026-06-05T19:30:00",
+  "status": 400,
+  "message": "Receiver email is required"
+}
+```
+
+---
+
+## DTOs Updated
+
+### LoginRequest
+
+* @NotBlank
+* @Email
+
+### RegisterRequest
+
+* @NotBlank
+* @Email
+* @Size
+
+### AddMoneyRequest
+
+* @NotNull
+* @DecimalMin
+
+### WithdrawRequest
+
+* @NotNull
+* @DecimalMin
+
+### TransactionRequest
+
+* @NotBlank
+* @Email
+* @NotNull
+* @DecimalMin
+
+---
+
+## Postman Testing
+
+### Test 1 — Empty Email
+
+Expected:
+
+```json
+{
+  "status": 400,
+  "message": "Email is required"
+}
+```
+
+### Test 2 — Invalid Email
+
+Expected:
+
+```json
+{
+  "status": 400,
+  "message": "Invalid email format"
+}
+```
+
+### Test 3 — Negative Amount
+
+Expected:
+
+```json
+{
+  "status": 400,
+  "message": "Amount must be at least 1"
+}
+```
+
+### Test 4 — Empty Receiver Email
+
+Expected:
+
+```json
+{
+  "status": 400,
+  "message": "Receiver email is required"
+}
+```
+
+### Test 5 — Invalid Receiver Email
+
+Expected:
+
+```json
+{
+  "status": 400,
+  "message": "Invalid receiver email format"
+}
+```
+
+---
+
+## Industry Benefits
+
+* Prevents invalid requests
+* Reduces service-layer validation code
+* Improves API security
+* Improves frontend integration
+* Provides consistent error responses
+* Follows enterprise Spring Boot standards
+
+---
+
+## Concepts Learned
+
+* Bean Validation
+* Jakarta Validation
+* @Valid
+* @NotBlank
+* @NotNull
+* @Email
+* @DecimalMin
+* MethodArgumentNotValidException
+* Global Exception Handling
+* API Input Validation
+
+---
+
+## Project Status
+
+Day 33 Successfully Completed ✅
+
+NeuroWallet AI Fintech Platform now supports enterprise-grade request validation.
+
