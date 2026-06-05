@@ -15,6 +15,8 @@ import com.smartwallet.repository.UserRepository;
 import com.smartwallet.repository.WalletRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionService {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(TransactionService.class);
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
@@ -54,6 +59,10 @@ public class TransactionService {
 
         if (request.getAmount() == null ||
                 request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+
+            logger.warn("Transaction failed due to invalid amount: {}",
+                    request.getAmount());
+
             throw new BadRequestException("Amount must be greater than zero");
         }
 
@@ -62,33 +71,47 @@ public class TransactionService {
                 .getAuthentication()
                 .getName();
 
-        System.out.println("Transaction started from " + senderEmail +
-                " to " + request.getReceiverEmail() +
-                " amount " + request.getAmount());
+        logger.info("Transaction started from {} to {} amount {}",
+                senderEmail,
+                request.getReceiverEmail(),
+                request.getAmount());
 
         User sender = userRepository.findByEmail(senderEmail);
 
         if (sender == null) {
+
+            logger.warn("Transaction failed. Sender not found: {}", senderEmail);
+
             throw new ResourceNotFoundException("Sender not found");
         }
 
         User receiver = userRepository.findByEmail(request.getReceiverEmail());
 
         if (receiver == null) {
+
+            logger.warn("Transaction failed. Receiver not found: {}",
+                    request.getReceiverEmail());
+
             transactionAuditService.saveFailedTransaction(
                     senderEmail,
                     request.getReceiverEmail(),
                     request.getAmount()
             );
+
             throw new ResourceNotFoundException("Receiver not found");
         }
 
         if (sender.getEmail().equals(receiver.getEmail())) {
+
+            logger.warn("Transaction failed. User tried to send money to self: {}",
+                    sender.getEmail());
+
             transactionAuditService.saveFailedTransaction(
                     sender.getEmail(),
                     receiver.getEmail(),
                     request.getAmount()
             );
+
             throw new BadRequestException("Cannot send money to yourself");
         }
 
@@ -99,19 +122,33 @@ public class TransactionService {
                 walletRepository.findByUserEmail(receiver.getEmail());
 
         if (senderWallet == null) {
+
+            logger.warn("Transaction failed. Sender wallet not found: {}",
+                    sender.getEmail());
+
             throw new ResourceNotFoundException("Sender wallet not found");
         }
 
         if (receiverWallet == null) {
+
+            logger.warn("Transaction failed. Receiver wallet not found: {}",
+                    receiver.getEmail());
+
             throw new ResourceNotFoundException("Receiver wallet not found");
         }
 
         if (senderWallet.getBalance().compareTo(request.getAmount()) < 0) {
+
+            logger.warn("Transaction failed due to insufficient balance. Sender: {}, Amount: {}",
+                    sender.getEmail(),
+                    request.getAmount());
+
             transactionAuditService.saveFailedTransaction(
                     sender.getEmail(),
                     receiver.getEmail(),
                     request.getAmount()
             );
+
             throw new BadRequestException("Insufficient balance");
         }
 
@@ -126,6 +163,8 @@ public class TransactionService {
 
         transactionRepository.save(transaction);
 
+        logger.info("Transaction saved with PENDING status");
+
         senderWallet.setBalance(
                 senderWallet.getBalance().subtract(request.getAmount())
         );
@@ -137,11 +176,17 @@ public class TransactionService {
         walletRepository.save(senderWallet);
         walletRepository.save(receiverWallet);
 
+        logger.info("Wallet balances updated successfully for sender and receiver");
+
         transaction.setStatus(TransactionStatus.SUCCESS);
         transactionRepository.save(transaction);
 
+        logger.info("Transaction status updated to SUCCESS");
+
         walletCacheService.clearWalletCache(sender.getEmail());
         walletCacheService.clearWalletCache(receiver.getEmail());
+
+        logger.info("Wallet cache cleared for sender and receiver");
 
         TransactionEvent event =
                 new TransactionEvent(
@@ -154,7 +199,7 @@ public class TransactionService {
 
         transactionEventProducer.publishTransactionEvent(event);
 
-        System.out.println("Transaction successful and Kafka event published");
+        logger.info("Transaction successful and Kafka event published");
 
         return "Transaction Successful";
     }
@@ -163,6 +208,11 @@ public class TransactionService {
             String email,
             int page,
             int size) {
+
+        logger.info("Fetching transaction history for email: {}, page: {}, size: {}",
+                email,
+                page,
+                size);
 
         Pageable pageable =
                 PageRequest.of(
@@ -183,6 +233,8 @@ public class TransactionService {
             int page,
             int size) {
 
+        logger.info("Fetching sent transactions for email: {}", email);
+
         Pageable pageable =
                 PageRequest.of(
                         page,
@@ -197,6 +249,8 @@ public class TransactionService {
             String email,
             int page,
             int size) {
+
+        logger.info("Fetching received transactions for email: {}", email);
 
         Pageable pageable =
                 PageRequest.of(
@@ -213,6 +267,8 @@ public class TransactionService {
             int page,
             int size) {
 
+        logger.info("Fetching transactions by status: {}", status);
+
         Pageable pageable =
                 PageRequest.of(
                         page,
@@ -225,6 +281,8 @@ public class TransactionService {
 
     public TransactionAnalyticsResponse getTransactionAnalytics() {
 
+        logger.info("Fetching transaction analytics");
+
         long successCount =
                 transactionRepository.countByStatus(
                         TransactionStatus.SUCCESS
@@ -234,6 +292,10 @@ public class TransactionService {
                 transactionRepository.countByStatus(
                         TransactionStatus.FAILED
                 );
+
+        logger.info("Transaction analytics fetched. Success: {}, Failed: {}",
+                successCount,
+                failedCount);
 
         return new TransactionAnalyticsResponse(
                 successCount,
@@ -245,6 +307,8 @@ public class TransactionService {
             String email,
             int page,
             int size) {
+
+        logger.info("Searching transactions by email keyword: {}", email);
 
         Pageable pageable =
                 PageRequest.of(
@@ -266,6 +330,10 @@ public class TransactionService {
             BigDecimal maxAmount,
             int page,
             int size) {
+
+        logger.info("Fetching transactions by amount range. Min: {}, Max: {}",
+                minAmount,
+                maxAmount);
 
         Pageable pageable =
                 PageRequest.of(

@@ -42,11 +42,12 @@ public class SecurityConfig {
                         // Admin Endpoints
                         .requestMatchers("/api/users").hasAuthority("ROLE_ADMIN")
                         
+                        //Swagger public endpoints
                         .requestMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                           "/v3/api-docs/**"
-).permitAll()
+                    ).permitAll()
 
                         .anyRequest().authenticated()
                 )
