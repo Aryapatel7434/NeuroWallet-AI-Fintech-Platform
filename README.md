@@ -1451,3 +1451,22 @@ docker compose logs
 
 NeuroWallet can now be started using a single Docker Compose command, making the application easier to deploy, manage, and scale.
 
+
+
+
+## Day 30 - Enterprise Logging
+
+Implemented industry-level logging using SLF4J and Spring Boot Logback.
+
+### Features Added
+- Replaced System.out.println with logger
+- Added INFO logs for successful flow
+- Added ERROR logs for failure cases
+- Added Kafka producer and consumer logging
+- Improved debugging and production readiness
+
+### Concepts Learned
+- Why logging is important in backend systems
+- Difference between System.out.println and Logger
+- Logging levels: INFO, WARN, ERROR, DEBUG
+- How industry debugs production issues
