@@ -28,6 +28,7 @@ D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\ResourceNotFoundException.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\TooManyRequestsException.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\exception\TooManyRequestsExceptionString.java
+D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\filter\RequestResponseLoggingFilter.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\kafka\TransactionEventConsumer.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\kafka\TransactionEventProducer.java
 D:\demo\NeuroWallet-AI-Fintech-Platform\src\main\java\com\smartwallet\model\AuditLog.java

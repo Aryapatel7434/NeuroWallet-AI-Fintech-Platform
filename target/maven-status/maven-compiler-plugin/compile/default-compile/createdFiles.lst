@@ -17,6 +17,7 @@ com\smartwallet\service\AuditService.class
 com\smartwallet\dto\WithdrawRequest.class
 com\smartwallet\service\OtpService.class
 com\smartwallet\service\TransactionService.class
+com\smartwallet\filter\RequestResponseLoggingFilter.class
 com\smartwallet\dto\ScheduleTransactionRequest.class
 com\smartwallet\controller\AuditController.class
 com\smartwallet\controller\UserController.class
