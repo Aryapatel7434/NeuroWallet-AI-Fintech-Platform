@@ -1929,3 +1929,44 @@ Day 34 Successfully Completed ✅
 
 NeuroWallet AI Fintech Platform now includes foundational automated unit testing using JUnit 5.
 
+
+
+
+
+
+# Day 35 - JUnit & Mockito Testing
+
+## Features Implemented
+
+- JUnit 5 Unit Testing
+- Mockito Mocking Framework
+- Repository Mock Testing
+- Maven Test Lifecycle
+- ByteBuddy Integration for Mockito
+- WalletService Unit Tests
+
+## Test Results
+
+Tests run: 7
+Failures: 0
+Errors: 0
+Skipped: 0
+
+BUILD SUCCESS
+
+## Technologies Used
+
+- JUnit 5
+- Mockito
+- Maven Surefire
+- ByteBuddy
+- Spring Boot Test
+
+## Learning Outcomes
+
+- Created first JUnit tests
+- Learned Mockito annotations
+- Mocked repository layer
+- Executed Maven test lifecycle
+- Fixed Java/Mockito compatibility issues
+
