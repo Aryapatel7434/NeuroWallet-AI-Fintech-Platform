@@ -2,7 +2,6 @@ package com.smartwallet.service;
 
 import com.smartwallet.model.RefreshToken;
 import com.smartwallet.repository.RefreshTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,8 +10,14 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public RefreshTokenService(
+            RefreshTokenRepository refreshTokenRepository) {
+
+        this.refreshTokenRepository =
+                refreshTokenRepository;
+    }
 
     public RefreshToken createRefreshToken(
             String email) {
@@ -35,6 +40,13 @@ public class RefreshTokenService {
         );
     }
 
+    public RefreshToken findByToken(
+            String token) {
+
+        return refreshTokenRepository
+                .findByToken(token);
+    }
+
     public RefreshToken validateRefreshToken(
             String token) {
 
@@ -42,14 +54,12 @@ public class RefreshTokenService {
                 refreshTokenRepository
                         .findByToken(token);
 
-        if(refreshToken == null) {
+        if (refreshToken == null) {
             return null;
         }
 
-        if(refreshToken
-                .getExpiryDate()
-                .isBefore(
-                        LocalDateTime.now())) {
+        if (refreshToken.getExpiryDate()
+                .isBefore(LocalDateTime.now())) {
 
             return null;
         }

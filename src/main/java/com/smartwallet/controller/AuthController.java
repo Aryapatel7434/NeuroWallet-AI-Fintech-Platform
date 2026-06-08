@@ -2,6 +2,7 @@ package com.smartwallet.controller;
 
 import com.smartwallet.dto.AuthResponse;
 import com.smartwallet.dto.LoginRequest;
+import com.smartwallet.dto.RefreshTokenRequest;
 import com.smartwallet.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(
+            AuthService authService) {
+
         this.authService = authService;
     }
 
@@ -21,5 +24,14 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request) {
 
         return authService.login(request);
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse refreshToken(
+            @RequestBody RefreshTokenRequest request) {
+
+        return authService.refreshToken(
+                request.getRefreshToken()
+        );
     }
 }

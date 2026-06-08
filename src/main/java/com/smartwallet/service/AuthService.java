@@ -25,12 +25,13 @@ public class AuthService {
     private final AuditService auditService;
     private final RefreshTokenService refreshTokenService;
 
-    public AuthService(UserRepository userRepository,
-                       JwtUtil jwtUtil,
-                       BCryptPasswordEncoder passwordEncoder,
-                       LoginAttemptService loginAttemptService,
-                       AuditService auditService,
-                       RefreshTokenService refreshTokenService) {
+    public AuthService(
+            UserRepository userRepository,
+            JwtUtil jwtUtil,
+            BCryptPasswordEncoder passwordEncoder,
+            LoginAttemptService loginAttemptService,
+            AuditService auditService,
+            RefreshTokenService refreshTokenService) {
 
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
@@ -41,6 +42,16 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+
+        System.out.println(
+                "EMAIL RECEIVED = " +
+                        request.getEmail()
+        );
+
+        System.out.println(
+                "ALL USERS IN DB = " +
+                        userRepository.findAll().size()
+        );
 
         logger.info(
                 "Login request received for email: {}",
@@ -65,10 +76,23 @@ public class AuthService {
             );
         }
 
-        User user =
-                userRepository.findByEmail(
-                        request.getEmail()
-                );
+       System.out.println("EMAIL FROM REQUEST = [" + request.getEmail() + "]");
+
+User user = userRepository.findByEmail(
+        request.getEmail()
+);
+
+System.out.println("USER = " + user);
+
+        System.out.println(
+                "USER OBJECT = " +
+                        user
+        );
+
+        System.out.println(
+                "USER FOUND = " +
+                        (user != null)
+        );
 
         if (user == null) {
 
@@ -92,9 +116,18 @@ public class AuthService {
             );
         }
 
-        if (!passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword())) {
+        boolean passwordMatch =
+                passwordEncoder.matches(
+                        request.getPassword(),
+                        user.getPassword()
+                );
+
+        System.out.println(
+                "PASSWORD MATCH = " +
+                        passwordMatch
+        );
+
+        if (!passwordMatch) {
 
             logger.warn(
                     "Login failed. Invalid password for email: {}",
@@ -138,10 +171,48 @@ public class AuthService {
                 );
 
         RefreshToken refreshToken =
-                refreshTokenService
-                        .createRefreshToken(
-                                user.getEmail()
-                        );
+                refreshTokenService.createRefreshToken(
+                        user.getEmail()
+                );
+
+        return new AuthResponse(
+                accessToken,
+                refreshToken.getToken()
+        );
+    }
+
+    public AuthResponse refreshToken(
+            String refreshTokenValue) {
+
+        RefreshToken refreshToken =
+                refreshTokenService.validateRefreshToken(
+                        refreshTokenValue
+                );
+
+        if (refreshToken == null) {
+
+            throw new RuntimeException(
+                    "Invalid Refresh Token"
+            );
+        }
+
+        User user =
+                userRepository.findByEmail(
+                        refreshToken.getEmail()
+                );
+
+        if (user == null) {
+
+            throw new RuntimeException(
+                    "User not found"
+            );
+        }
+
+        String accessToken =
+                jwtUtil.generateToken(
+                        user.getEmail(),
+                        user.getRole()
+                );
 
         return new AuthResponse(
                 accessToken,

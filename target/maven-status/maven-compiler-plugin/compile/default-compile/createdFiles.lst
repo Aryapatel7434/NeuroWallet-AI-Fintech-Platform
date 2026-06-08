@@ -7,6 +7,7 @@ com\smartwallet\dto\RegisterRequest.class
 com\smartwallet\kafka\TransactionEventConsumer.class
 com\smartwallet\exception\GlobalExceptionHandler.class
 com\smartwallet\service\UserService.class
+com\smartwallet\service\request.class
 com\smartwallet\controller\ScheduledTransactionController.class
 com\smartwallet\security\JwtUtil.class
 com\smartwallet\model\TransactionStatus.class
@@ -57,9 +58,9 @@ com\smartwallet\security\RateLimiterService.class
 com\smartwallet\service\WalletCacheService.class
 com\smartwallet\exception\ResourceNotFoundException.class
 com\smartwallet\model\Wallet.class
-com\smartwallet\controller\AuthService.class
 com\smartwallet\service\ScheduledTransactionService.class
 com\smartwallet\service\walletRepostiroy.class
+com\smartwallet\dto\RefreshTokenRequest.class
 com\smartwallet\service\page.class
 com\smartwallet\exception\BadRequestException.class
 com\smartwallet\service\RefreshTokenService.class
