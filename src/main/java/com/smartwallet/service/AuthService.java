@@ -1,6 +1,8 @@
 package com.smartwallet.service;
 
+import com.smartwallet.dto.AuthResponse;
 import com.smartwallet.dto.LoginRequest;
+import com.smartwallet.model.RefreshToken;
 import com.smartwallet.model.User;
 import com.smartwallet.repository.UserRepository;
 import com.smartwallet.security.JwtUtil;
@@ -21,28 +23,36 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
     private final AuditService auditService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(UserRepository userRepository,
                        JwtUtil jwtUtil,
                        BCryptPasswordEncoder passwordEncoder,
                        LoginAttemptService loginAttemptService,
-                       AuditService auditService) {
+                       AuditService auditService,
+                       RefreshTokenService refreshTokenService) {
 
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
         this.auditService = auditService;
+        this.refreshTokenService = refreshTokenService;
     }
 
-    public String login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
-        logger.info("Login request received for email: {}", request.getEmail());
+        logger.info(
+                "Login request received for email: {}",
+                request.getEmail()
+        );
 
         if (loginAttemptService.isBlocked(request.getEmail())) {
 
-            logger.warn("Login blocked due to too many failed attempts for email: {}",
-                    request.getEmail());
+            logger.warn(
+                    "Login blocked due to too many failed attempts for email: {}",
+                    request.getEmail()
+            );
 
             auditService.log(
                     request.getEmail(),
@@ -50,16 +60,26 @@ public class AuthService {
                     "BLOCKED"
             );
 
-            return "Account temporarily locked due to too many failed login attempts";
+            throw new RuntimeException(
+                    "Account temporarily locked due to too many failed login attempts"
+            );
         }
 
-        User user = userRepository.findByEmail(request.getEmail());
+        User user =
+                userRepository.findByEmail(
+                        request.getEmail()
+                );
 
         if (user == null) {
 
-            logger.warn("Login failed. Invalid email: {}", request.getEmail());
+            logger.warn(
+                    "Login failed. Invalid email: {}",
+                    request.getEmail()
+            );
 
-            loginAttemptService.loginFailed(request.getEmail());
+            loginAttemptService.loginFailed(
+                    request.getEmail()
+            );
 
             auditService.log(
                     request.getEmail(),
@@ -67,15 +87,23 @@ public class AuthService {
                     "FAILED"
             );
 
-            return "Invalid email";
+            throw new RuntimeException(
+                    "Invalid email"
+            );
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
 
-            logger.warn("Login failed. Invalid password for email: {}",
-                    request.getEmail());
+            logger.warn(
+                    "Login failed. Invalid password for email: {}",
+                    request.getEmail()
+            );
 
-            loginAttemptService.loginFailed(request.getEmail());
+            loginAttemptService.loginFailed(
+                    request.getEmail()
+            );
 
             auditService.log(
                     request.getEmail(),
@@ -83,10 +111,14 @@ public class AuthService {
                     "FAILED"
             );
 
-            return "Invalid password";
+            throw new RuntimeException(
+                    "Invalid password"
+            );
         }
 
-        loginAttemptService.loginSucceeded(request.getEmail());
+        loginAttemptService.loginSucceeded(
+                request.getEmail()
+        );
 
         auditService.log(
                 request.getEmail(),
@@ -94,11 +126,26 @@ public class AuthService {
                 "SUCCESS"
         );
 
-        logger.info("Login successful for email: {}", request.getEmail());
+        logger.info(
+                "Login successful for email: {}",
+                request.getEmail()
+        );
 
-        return jwtUtil.generateToken(
-                user.getEmail(),
-                user.getRole()
+        String accessToken =
+                jwtUtil.generateToken(
+                        user.getEmail(),
+                        user.getRole()
+                );
+
+        RefreshToken refreshToken =
+                refreshTokenService
+                        .createRefreshToken(
+                                user.getEmail()
+                        );
+
+        return new AuthResponse(
+                accessToken,
+                refreshToken.getToken()
         );
     }
 }

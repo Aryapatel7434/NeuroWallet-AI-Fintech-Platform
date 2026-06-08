@@ -1,5 +1,6 @@
 package com.smartwallet.controller;
 
+import com.smartwallet.dto.AuthResponse;
 import com.smartwallet.dto.LoginRequest;
 import com.smartwallet.service.AuthService;
 import jakarta.validation.Valid;
@@ -16,7 +17,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequest request) {
+    public AuthResponse login(
+            @Valid @RequestBody LoginRequest request) {
+
         return authService.login(request);
     }
 }
