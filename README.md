@@ -233,7 +233,7 @@ Frontend Development (React)
 
 ## Developer
 
-Ary Patel
+Arya Patel
 
 Backend Developer | Java | Spring Boot | Security | FinTech Engineering
 
