@@ -24,48 +24,45 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
-               .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
 
-        // Authentication APIs
-        .requestMatchers(
-                "/api/auth/login",
-                "/api/auth/refresh",
-                "/api/auth/forgot-password",
-                "/api/auth/reset-password"
-        ).permitAll()
+                        // Authentication APIs
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/refresh",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password"
+                        ).permitAll()
 
-        // Registration
-        .requestMatchers("/api/users/register").permitAll()
+                        // Registration
+                        .requestMatchers("/api/users/register").permitAll()
 
-        // OTP
-        .requestMatchers("/api/otp/**").permitAll()
+                        // OTP
+                        .requestMatchers("/api/otp/**").permitAll()
 
-        // Audit
-        .requestMatchers("/api/audit/**").permitAll()
+                        // Audit
+                        .requestMatchers("/api/audit/**").permitAll()
 
-        // Dashboard (Day 44)
-        .requestMatchers("/api/dashboard/**").permitAll()
+                        // Actuator
+                        .requestMatchers("/actuator/**").permitAll()
 
-        // Actuator
-        .requestMatchers("/actuator/**").permitAll()
+                        // Swagger
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
 
-        // Swagger
-        .requestMatchers(
-                "/swagger-ui/**",
-                "/swagger-ui.html",
-                "/v3/api-docs/**"
-        ).permitAll()
+                        // Protected APIs
+                        .requestMatchers("/api/wallet/**").authenticated()
+                        .requestMatchers("/api/transactions/**").authenticated()
 
-        // Protected APIs
-        .requestMatchers("/api/wallet/**").authenticated()
-        .requestMatchers("/api/transactions/**").authenticated()
+                        // Admin APIs
+                        .requestMatchers("/api/users")
+                        .hasAuthority("ROLE_ADMIN")
 
-        // Admin APIs
-        .requestMatchers("/api/users")
-        .hasAuthority("ROLE_ADMIN")
-
-        .anyRequest().authenticated()
-)
+                        .anyRequest().authenticated()
+                )
 
                 .addFilterBefore(
                         jwtFilter,

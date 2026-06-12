@@ -2,21 +2,17 @@ version: "3.8"
 
 services:
 
-mysql:
-  image: mysql:8.0
-  container_name: neurowallet-mysql
-  environment:
-    MYSQL_ROOT_PASSWORD: Arya@
-    MYSQL_DATABASE: smartwalletdb
-  ports:
-    - "3307:3306"
-  volumes:
-    - mysql_data:/var/lib/mysql
-  healthcheck:
-    test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pArya@"]
-    interval: 10s
-    timeout: 5s
-    retries: 10
+  mysql:
+    image: mysql:8.0
+    container_name: neurowallet-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Arya
+      MYSQL_DATABASE: smartwalletdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   kafka:
     image: apache/kafka:latest
     container_name: neurowallet-kafka
@@ -47,7 +43,7 @@ mysql:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/smartwalletdb
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Arya@
+      SPRING_DATASOURCE_PASSWORD: Arya
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
 volumes:
